@@ -84,10 +84,10 @@ def pi_version():
     or not a Raspberry Pi.
     """
     # Check /proc/cpuinfo for the Hardware field value.
-    # 2708 is pi 1
-    # 2709 is pi 2
-    # 2835 is pi 3 or pi 4
-    # 2837 is pi 3b+
+    # 2708 and 2835 are pi 1, pi zero, pi zero w
+    # 2836 or a 2837 are pi 2
+    # 2837 is pi 3 and pi 3b+
+    # 2711 is pi 4
     # Anything else is not a pi.
     with open('/proc/cpuinfo', 'r') as infile:
         cpuinfo = infile.read()
@@ -97,18 +97,15 @@ def pi_version():
     if not match:
         # Couldn't find the hardware, assume it isn't a pi.
         return None
-    if match.group(1) == 'BCM2708':
+    if match.group(1) in ['BCM2708', 'BCM2835']:
         # Pi 1
         return 1
-    elif match.group(1) == 'BCM2709':
-        # Pi 2
+    elif match.group(1) in ['BCM2836', 'BCM2387']:
+        # Pi 2 Rev 1, Pi 2 Rev 1.2, Pi 3
         return 2
-    elif match.group(1) == 'BCM2835':
-        # Pi 3 or Pi 4
-        return 3
-    elif match.group(1) == 'BCM2837':
-        # Pi 3b+
-        return 3
+    elif match.group(1) == 'BCM2711':
+        # Pi 4
+        return 4
     else:
         # Something else, not a pi.
         return None
